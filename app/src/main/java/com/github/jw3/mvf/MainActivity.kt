@@ -1,26 +1,101 @@
 package com.github.jw3.mvf
 
 import android.Manifest
-import android.content.Context
 import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationManager
+import android.graphics.Color
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.esri.arcgisruntime.geometry.*
-import com.esri.arcgisruntime.layers.RasterLayer
-import com.esri.arcgisruntime.mapping.ArcGISMap
-import com.esri.arcgisruntime.mapping.Basemap
-import com.esri.arcgisruntime.mapping.Viewpoint
-import com.esri.arcgisruntime.raster.Raster
+import androidx.fragment.app.FragmentActivity
 import kotlinx.android.synthetic.main.activity_main.*
-import java.nio.file.Paths
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : FragmentActivity(), OnCamFragmentInteractionListener, OnMapFragmentInteractionListener {
+    val sm = Machine(this)
+
+    var cam0: CamView? = null
+    var cam1: CamView? = null
+    var map: MapView? = null
+    var minimap: MapView? = null
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        askGpsPermission()
+
+        cam.visibility = View.INVISIBLE
+        cam.setBackgroundColor(Color.GREEN)
+
+        map = MapView.newInstance("map")
+        minimap = MapView.newInstance("minimap")
+        cam0 = CamView.newInstance("cam0")
+        cam1 = CamView.newInstance("cam1")
+
+        supportFragmentManager
+            .beginTransaction()
+            .disallowAddToBackStack()
+            .replace(R.id.map, map!!)
+            .replace(R.id.minimap0, minimap!!)
+            .replace(R.id.minicam0, cam0!!)
+            .replace(R.id.minicam1, cam1!!)
+            .commit()
+
+
+        minicam0.setOnClickListener {
+            sm.call("cam0")
+        }
+        minicam1.setOnClickListener {
+            sm.call("cam1")
+        }
+    }
+
+    fun activateCam0() {
+        println("activate cam0")
+        val v = cam0?.view
+        val cp = cam as ViewGroup
+        minicam0.removeView(v)
+        cp.addView(v)
+        cp.visibility = View.VISIBLE
+    }
+
+    fun activateCam1() {
+        println("activate cam1")
+        val v = cam1?.view
+        val cp = cam as ViewGroup
+        minicam1.removeView(v)
+        cp.addView(v)
+        cp.visibility = View.VISIBLE
+
+    }
+
+    fun deactivateCam0() {
+        println("deactivate cam0")
+        val v = cam0?.view
+        val cp = cam as ViewGroup
+        cp.removeView(v)
+        minicam0.addView(v)
+        cp.visibility = View.INVISIBLE
+    }
+
+    fun deactivateCam1() {
+        println("deactivate cam1")
+        val v = cam1?.view
+        val cp = cam as ViewGroup
+        cp.removeView(v)
+        minicam1.addView(v)
+        cp.visibility = View.INVISIBLE
+    }
+
+    override fun onFragmentInteraction(f: CamView) {
+        f.idStr()?.let { sm.call(it) }
+    }
+
+    override fun onFragmentInteraction(f: MapView) {
+        f.idStr()?.let { sm.call(it) }
+    }
+
 
     private fun askGpsPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)
@@ -39,57 +114,73 @@ class MainActivity : AppCompatActivity() {
             )
         }
     }
+}
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+interface OnCamFragmentInteractionListener {
+    fun onFragmentInteraction(f: CamView)
+}
 
-        askGpsPermission()
+interface OnMapFragmentInteractionListener {
+    fun onFragmentInteraction(f: MapView)
+}
 
-        val x: Location? = currentLocation()
-        val lat = x?.latitude ?: 42.0
-        val lon = x?.longitude ?: 42.0
+interface StateT<out T> : (String) -> T
+interface State : StateT<State>
 
-        val map = basemapFromStorage()?.let { ArcGISMap(it) } ?: ArcGISMap(
-            Basemap.Type.IMAGERY,
-            lat,
-            lon,
-            18
-        )
+class Machine(val ax: MainActivity) {
+    var current: State = DefaultState()
 
-        mapView.map = map
-        mapView.map.basemap.baseLayers.first().addDoneLoadingListener {
-            val c = map.basemap.baseLayers.first()
-            mapView.setViewpoint(Viewpoint(c.fullExtent.center, 18.0))
-
-            println(mapView.map.spatialReference.wkid)
-            println(mapView.map.spatialReference.unit.name)
-        }
+    fun call(e: String) {
+        current = current(e)
     }
 
-    private fun currentLocation(): Location? {
-        val m = applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return try {
-            m.getProviders(true).firstOrNull()?.let { x -> m.getLastKnownLocation(x) }
-        } catch (e: SecurityException) {
-            Log.w("gps", "unable to get initial location")
-            null
-        }
-    }
-
-    companion object {
-        fun basemapFromStorage(): Basemap? {
-            return Environment.getExternalStorageDirectory().listFiles()
-                ?.map { f -> f.absolutePath }?.let { f ->
-                    val layers = f.filter { it.endsWith(".tif") }
-                        .map {
-                            it
-                        }
-                        .map { Raster(it) }
-                        .map { RasterLayer(it) }
-
-                    if (layers.isNotEmpty()) Basemap(layers, emptyList()) else null
+    inner class DefaultState : State {
+        override operator fun invoke(s: String): State {
+            return when (s) {
+                "cam0" -> {
+                    ax.activateCam0()
+                    ViewingCam0()
                 }
+                "cam1" -> {
+                    ax.activateCam1()
+                    ViewingCam1()
+                }
+                else -> this
+            }
+        }
+    }
+
+    inner class ViewingCam0 : State {
+        override operator fun invoke(s: String): State {
+            return when (s) {
+                "cam0" -> {
+                    ax.deactivateCam0()
+                    DefaultState()
+                }
+                "cam1" -> {
+                    ax.deactivateCam0()
+                    ax.activateCam1()
+                    ViewingCam1()
+                }
+                else -> this
+            }
+        }
+    }
+
+    inner class ViewingCam1 : State {
+        override operator fun invoke(s: String): State {
+            return when (s) {
+                "cam0" -> {
+                    ax.deactivateCam1()
+                    ax.activateCam0()
+                    ViewingCam0()
+                }
+                "cam1" -> {
+                    ax.deactivateCam1()
+                    DefaultState()
+                }
+                else -> this
+            }
         }
     }
 }
