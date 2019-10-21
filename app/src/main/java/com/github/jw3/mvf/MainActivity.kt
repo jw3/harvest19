@@ -30,8 +30,8 @@ class MainActivity : FragmentActivity(), OnCamFragmentInteractionListener, OnMap
 
         map = MapView.newInstance("map")
         minimap = MapView.newInstance("minimap")
-        cam0 = CamView.newInstance("cam0")
-        cam1 = CamView.newInstance("cam1")
+        cam0 = CamView.newInstance("cam0", "192.168.1.101", "")
+        cam1 = CamView.newInstance("cam1", "192.168.1.102", "")
 
         supportFragmentManager
             .beginTransaction()
