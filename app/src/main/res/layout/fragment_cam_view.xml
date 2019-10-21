@@ -1,10 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             tools:context=".CamView">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".CamView">
 
-    <view android:layout_width="wrap_content" android:layout_height="wrap_content"
-          class="com.google.android.exoplayer2.ui.PlayerView" id="@+id/view" android:id="@+id/camView"/>
+    <view
+        android:id="@+id/camView"
+        class="com.google.android.exoplayer2.ui.PlayerView"
+        id="@+id/view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:use_controller="false" />
+
+
 </FrameLayout>
