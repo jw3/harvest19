@@ -7,51 +7,65 @@
     tools:context=".MainActivity">
 
     <FrameLayout
-        android:layout_width="123dp"
-        android:layout_height="123dp"
         android:id="@+id/minicam0"
+        android:layout_width="123dp"
+        android:layout_height="123dp"
         android:layout_marginTop="8dp"
-        app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="8dp" android:background="@android:drawable/screen_background_dark_transparent">
+        android:layout_marginEnd="8dp"
+        android:background="@android:drawable/screen_background_dark_transparent"
+        android:elevation="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
     </FrameLayout>
+
     <FrameLayout
-        android:layout_width="123dp"
-        android:layout_height="123dp"
         android:id="@+id/minicam1"
-        android:layout_marginTop="32dp"
-        app:layout_constraintTop_toBottomOf="@+id/minicam0" app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginEnd="8dp" android:background="@android:drawable/screen_background_dark_transparent">
-
-    </FrameLayout>
-    <FrameLayout
         android:layout_width="123dp"
         android:layout_height="123dp"
-        android:id="@+id/minimap0"
-        android:layout_marginBottom="8dp" app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginTop="32dp" app:layout_constraintTop_toBottomOf="@+id/minicam1"
-        app:layout_constraintEnd_toEndOf="parent" android:layout_marginEnd="8dp"
-        android:background="@android:drawable/screen_background_dark_transparent">
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="@android:drawable/screen_background_dark_transparent"
+        android:elevation="6dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/minicam0">
 
     </FrameLayout>
-    <FrameLayout
-        android:layout_width="1066dp"
-        android:layout_height="568dp"
-        android:id="@+id/map" app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintStart_toStartOf="parent"
-        android:layout_marginStart="32dp" android:layout_marginBottom="8dp" android:layout_marginTop="8dp"
-        android:background="@android:drawable/screen_background_dark_transparent" android:visibility="visible">
 
-    </FrameLayout>
     <FrameLayout
-        android:layout_width="499dp"
-        android:layout_height="381dp" android:id="@+id/cam"
-        app:layout_constraintStart_toStartOf="@+id/map" app:layout_constraintEnd_toEndOf="@+id/map"
+        android:id="@+id/cam"
+        android:layout_width="720dp"
+        android:layout_height="480dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="120dp"
+        android:layout_marginBottom="8dp"
+        android:background="@android:drawable/screen_background_light_transparent"
+        android:elevation="5dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.504"
-        app:layout_constraintTop_toTopOf="@+id/map" app:layout_constraintBottom_toBottomOf="@+id/map"
-        android:layout_marginEnd="333dp" android:layout_marginStart="333dp" android:layout_marginBottom="111dp"
-        android:layout_marginTop="111dp"
-        android:visibility="visible" android:background="@android:drawable/screen_background_light_transparent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/map"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@android:drawable/screen_background_dark_transparent"
+        android:elevation="0dp"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
     </FrameLayout>
 

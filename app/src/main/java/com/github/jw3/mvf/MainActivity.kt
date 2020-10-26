@@ -17,7 +17,6 @@ class MainActivity : FragmentActivity(), OnCamFragmentInteractionListener, OnMap
     var cam0: CamView? = null
     var cam1: CamView? = null
     var map: MapView? = null
-    var minimap: MapView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,7 +28,6 @@ class MainActivity : FragmentActivity(), OnCamFragmentInteractionListener, OnMap
         cam.setBackgroundColor(Color.GREEN)
 
         map = MapView.newInstance("map")
-        minimap = MapView.newInstance("minimap")
         cam0 = CamView.newInstance("cam0", "192.168.1.101", "")
         cam1 = CamView.newInstance("cam1", "192.168.1.102", "")
 
@@ -37,7 +35,6 @@ class MainActivity : FragmentActivity(), OnCamFragmentInteractionListener, OnMap
             .beginTransaction()
             .disallowAddToBackStack()
             .replace(R.id.map, map!!)
-            .replace(R.id.minimap0, minimap!!)
             .replace(R.id.minicam0, cam0!!)
             .replace(R.id.minicam1, cam1!!)
             .commit()
